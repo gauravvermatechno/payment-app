@@ -10,7 +10,7 @@ export default function Home() {
   const handlePayment = async () => {
     const myHeaders = new Headers({
       Authorization:
-        "Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YzM4OWQzOS0wNzk0LTRmOTMtYWVkNC0zYjE3ZGUxODljMmYiLCJVc2VySWQiOiIzNTkwNiIsIlVzZXJUeXBlIjoiQWdlbnQiLCJQYXJlbnRJRCI6IjAiLCJFbWFpbElEIjoibWF5dXJpLnBAdGVjaG5vaGVhdmVuLmNvbSIsImlzcyI6Imh0dHA6Ly9yYXluYXdlYmFwaWF3cy5yYXluYXRvdXJzLmNvbSIsImF1ZCI6Imh0dHA6Ly9yYXluYXdlYmFwaWF3cy5yYXluYXRvdXJzLmNvbSJ9.orxLloGfgH2zv_MwHUL4vlJlUU0wsOqmblgQ_HkmL_s",
+        "Bearer L_s",
       "Content-Type": "application/json",
     });
 
@@ -46,6 +46,7 @@ export default function Home() {
       });
       const result = await response.json();
 
+      
       if (result.html) {
         // Handle PayU gateway
         if (result.paymentGateway === "PayU") {

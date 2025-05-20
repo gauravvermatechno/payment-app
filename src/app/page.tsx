@@ -1,103 +1,111 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
 
 export default function Home() {
+  const [amount, setAmount] = useState("5.00");
+  const [firstName, setFirstName] = useState("");
+  const txnid = `trxID-${Date.now()}-${Math.floor(Math.random() * 100)}`;
+
+  const handlePayment = async () => {
+    const myHeaders = new Headers({
+      Authorization:
+        "Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YzM4OWQzOS0wNzk0LTRmOTMtYWVkNC0zYjE3ZGUxODljMmYiLCJVc2VySWQiOiIzNTkwNiIsIlVzZXJUeXBlIjoiQWdlbnQiLCJQYXJlbnRJRCI6IjAiLCJFbWFpbElEIjoibWF5dXJpLnBAdGVjaG5vaGVhdmVuLmNvbSIsImlzcyI6Imh0dHA6Ly9yYXluYXdlYmFwaWF3cy5yYXluYXRvdXJzLmNvbSIsImF1ZCI6Imh0dHA6Ly9yYXluYXdlYmFwaWF3cy5yYXluYXRvdXJzLmNvbSJ9.orxLloGfgH2zv_MwHUL4vlJlUU0wsOqmblgQ_HkmL_s",
+      "Content-Type": "application/json",
+    });
+
+    const paymentData = {
+      Amount: amount,
+      FirstName: firstName,
+      LastName: "Khan",
+      Email: "test@gmail.com",
+      Phone: "9033661129",
+      CcNum: "5506900480000008",
+      //CcNum: "5381230100931477",
+      CcExpMon: "09",
+      CcExpYr: "2025",
+      Ccvv: "123",
+      CcName: "Sumit Lagad",
+      Gateway: "Network",
+      //Gateway: "Payu", 
+      //Gateway: "Checkout", 
+      DeviceInfo: "Mozilla/5.0",
+      GuestUserId: "123456",
+      TransactionId: txnid,
+      RedirectUrl:  "https://raynatours.com/success",
+      OrderId: `o-${Date.now()}-${Math.floor(Math.random() * 10)}`,
+    };
+
+    try {
+      const response = await fetch("http://localhost:55621/api/v1/payments",
+      //const response = await fetch("http://thorough-visually-drum.ngrok-free.app/api/payment/v1",
+      {
+        method: "POST",
+        headers: myHeaders,
+        body: JSON.stringify(paymentData),
+      });
+      const result = await response.json();
+
+      if (result.html) {
+        // Handle PayU gateway
+        if (result.paymentGateway === "PayU") {
+          const tempDiv = document.createElement("div");
+          tempDiv.innerHTML = result.html;
+          document.body.appendChild(tempDiv);
+          const form = tempDiv.querySelector("form");
+          if (form) form.submit();
+        }
+
+        // Handle Network gateway
+        if (result.paymentGateway === "Network") {
+          const tempDiv = document.createElement("div");
+          tempDiv.innerHTML = result.html;
+        
+          const form = tempDiv.querySelector("form");
+          if (form) {
+            document.body.appendChild(form); // optional, just for debug
+            form.submit();
+          } else {
+            console.error("No form found in Network HTML response.");
+          }
+        }
+        // Handle Checkout gateway
+        if (result.paymentGateway === "Checkout") {
+          window.location.href = result.html;
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+        <p>Hello</p>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+        <input
+          type="text"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          placeholder="Enter your first name"
+          className="px-4 py-2 border rounded mb-4"
+        />
+
+        <input
+          type="text"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="px-4 py-2 border rounded mb-4"
+        />
+
+        <button
+          onClick={handlePayment}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Pay Now
+        </button>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }

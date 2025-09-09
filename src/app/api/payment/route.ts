@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
     const orderId = `${Math.ceil(Math.random() * 10000)}${Math.ceil(Math.random() * 10000)}${Math.ceil(Math.random() * 10000)}`;
 
-    const url = "https://localhost:55621/api/payment/v1/create";
+    const url = "http://localhost:55621/api/payment/v1/create";
 
     const headers = {
       Authorization: `Bearer ${tokenData.token}`,

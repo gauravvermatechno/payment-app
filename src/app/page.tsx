@@ -442,7 +442,6 @@ declare global {
 export default function Home() {
   const [amount, setAmount] = useState("5.00");
   const [firstName, setFirstName] = useState("");
-  const [selectedApi, setSelectedApi] = useState("old");
   const [gateway, setGateway] = useState("Network");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -450,130 +449,65 @@ export default function Home() {
   const handlePayment = async () => {
     setLoading(true);
     setErrorMsg("");
-  
-
-    const timestamp = Date.now();
-    const txnId = `Txn-${timestamp}`;
-    const orderId = `Ord-${timestamp}`;
-
-    const isOldApi = selectedApi === "old";
-
-    const url = isOldApi
-      ? "http://localhost:55621/api/payment/v1/payments"
-      : "http://localhost:55621/api/payment/v1/create";
-      //:"https://global-api-alb-external-dev-1469721947.me-south-1.elb.amazonaws.com/api/payment/v1/create";
-
-    const headers = new Headers({
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZ2VudElkIjo0MDQ0NCwicGFydG5lcklkIjowLCJ0ZWFtTWVtYmVySWQiOjAsIndlYnNpdGVJZCI6MTgsImd1ZXN0VXNlcklkIjowLCJwZXJtaXNzaW9ucyI6IltdIiwiZXhwaXJ5IjoiMjAyNS0wOS0wMVQwOTowNDowMy41OTUxMjkyWiIsImFjY2Vzc1Rva2VuRXhwaXJ5TWludXRlcyI6NSwidHlwZSI6ImIyYnVuYXV0aGVudGljYXRlZCIsImF1ZCI6IiIsImlwQWRkcmVzcyI6IltdIiwic2VydmljZXMiOiJbXSIsIlRva2VuVHlwZSI6IkFjY2VzcyIsInNlc3Npb25JZCI6IjkzNmVkYzFmLTYxODItNDE0Zi1hYTlmLWQyZTJiZDU5YzQ5NiIsIm5iZiI6MTc1NjcxNzE0MywiZXhwIjoxNzU2NzE3NDQzLCJpYXQiOjE3NTY3MTcxNDN9.nfd5v9MiR3Al-JPCKcLrlII9RCPGsnGmM2B__G1RuJA",
-      "Content-Type": "application/json",
-    });
-
-     
-
-    const body = isOldApi
-      ? {
-          Amount: amount,          
-          FirstName: firstName || "Sumit",
-          LastName: "User",
-          Email: "tes268@test.com",
-          Phone: "91322586589",
-          CcNum: "5506900480000008",
-          CcExpMon: "01",
-          CcExpYr: "2039",
-          Ccvv: "123",
-          CcName: "Sumit Lagad",
-          Gateway: gateway,
-          DeviceInfo: "Mozilla/5.0",
-          GuestUserId: "12125",
-          TransactionId: txnId,
-          RedirectUrl: "https://localhost:55622/success",
-          OrderId: orderId,
-        }
-      : {
-          orderId,
-          paymentFor: "booking",
-          redirectUrl: "http://localhost:3000/paymentSuccess",
-          deviceInfo: "web",
-          hostIp: "127.0.0.1",
-          isClientPaymentGateway: true,
-          customer: {
-            firstName: firstName || "John",
-            lastName: "Doe",
-            email: "tes245@test.com",
-            phone: "1234567890",
-            currency: "USD",
-            totalAmount: parseFloat(amount),
-          },
-          billing: {
-            billingTotalAmountInAED: 10.50,
-            billingChargeAmountInAED: 0,
-          },
-          paymentMode: "CreditCard",
-          CreditCard: {
-            
-            //CcNum: "5506900480000008",
-            
-            
-            ////Non OTP
-            CcNum: "4093191766216474",
-            CcExpMon: "12",
-            CcExpYr: "2025",
-            Ccvv: "123",
-            CcName: "John Doe",
-          },
-          gateway: gateway,
-        };
 
     try {
-      const response = await fetch(url, {
+      const response = await fetch("/api/payment", {
         method: "POST",
-        headers,
-        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          gateway,
+          amount,
+          firstName,
+        }),
       });
 
       const result = await response.json();
       
+      if (!result.success) {
+        throw new Error(result.error || "Payment failed");
+      }
+
+      const paymentData = result.data;
+      
       // Call the PaymentSDK to process the payment response
       if (window.PaymentSDK) {
-        window.PaymentSDK.processPayment(gateway, result.paymentResponse || result);
+        window.PaymentSDK.processPayment(result.gateway, paymentData.paymentResponse || paymentData);
       }
       
-     if ((result.status === true || result.status === "Success" || result.status === "Failure") && result.redirectUrl) {
-  window.location.href = result.redirectUrl;
-}
-
-      else if(result.html) {
+      if ((paymentData.status === true || paymentData.status === "Success" || paymentData.status === "Failure") && paymentData.redirectUrl) {
+        window.location.href = paymentData.redirectUrl;
+      }
+      else if(paymentData.html) {
         const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = result.html;
+        tempDiv.innerHTML = paymentData.html;
         const form = tempDiv.querySelector("form");
 
         if (form) {
           document.body.appendChild(form);
           form.submit();
-        } 
-        
-        else {
+        } else {
           setErrorMsg("Payment form not found in response.");
         }
       }
       else if (
-  result.paymentGateway &&
-  result.paymentGateway.toLowerCase() === "checkout"
-) {
-  if (result.paymentResponse && result.paymentResponse.redirectUrl) {
-    window.location.href = result.paymentResponse.redirectUrl;
-  } else {
-    console.error("Checkout redirectUrl not found in response", result);
-    setErrorMsg("Checkout payment failed: redirectUrl missing.");
-  }
-} 
-      else if (
-        result.referenceId &&
-        result.paymentGateway &&
-        result.paymentGateway.toLowerCase() === "network"
+        paymentData.paymentGateway &&
+        paymentData.paymentGateway.toLowerCase() === "checkout"
       ) {
-        const termUrl = `http://localhost:55622/api/payment/v1/termurl?referenceId=${result.referenceId}&gatewayName=NETWORK`;
+        if (paymentData.paymentResponse && paymentData.paymentResponse.redirectUrl) {
+          window.location.href = paymentData.paymentResponse.redirectUrl;
+        } else {
+          console.error("Checkout redirectUrl not found in response", paymentData);
+          setErrorMsg("Checkout payment failed: redirectUrl missing.");
+        }
+      } 
+      else if (
+        paymentData.referenceId &&
+        paymentData.paymentGateway &&
+        paymentData.paymentGateway.toLowerCase() === "network"
+      ) {
+        const termUrl = `https://dev.raynatours.com/api/payment/v1/termurl?referenceId=${paymentData.referenceId}&gatewayName=NETWORK`;
         const termResp = await fetch(termUrl);
         if (termResp.ok) {
           const htmlText = await termResp.text();
@@ -625,20 +559,6 @@ export default function Home() {
           className="px-4 py-2 border rounded mb-4 w-64"
         />
 
-        <div className="flex flex-col gap-2 mb-4">
-          <label htmlFor="apiSelect" className="text-sm font-medium">
-            Choose API to Call:
-          </label>
-          <select
-            id="apiSelect"
-            value={selectedApi}
-            onChange={(e) => setSelectedApi(e.target.value)}
-            className="px-4 py-2 border rounded"
-          >
-            <option value="old">Old API - /payment/v1/payments</option>
-            <option value="new">New API - /payment/v1/create</option>
-          </select>
-        </div>
 
         <div className="flex flex-col gap-2 mb-4">
           <label htmlFor="gatewaySelect" className="text-sm font-medium">

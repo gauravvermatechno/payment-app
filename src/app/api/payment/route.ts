@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { gateway, amount, firstName } = body;
+    const { amount, firstName } = body;
 
     // Get token first
     const tokenResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/token`, {
@@ -51,7 +51,6 @@ export async function POST(request: NextRequest) {
         Ccvv: "123",
         CcName: "John Doe",
       },
-      gateway: gateway,
     };
 
     const response = await fetch(url, {
@@ -61,12 +60,10 @@ export async function POST(request: NextRequest) {
     });
 
     const result = await response.json();
+
+    console.log("result",result)
     
-    return NextResponse.json({
-      success: true,
-      data: result,
-      gateway: gateway
-    });
+    return NextResponse.json(result);
 
   } catch (error) {
     console.error("Payment API error:", error);

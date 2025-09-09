@@ -5,6 +5,7 @@
 
 import { useState } from "react";
 import Script from "next/script";
+import { getCardOptions } from "../config/test-cards.js";
 
 declare global {
   interface Window {
@@ -17,6 +18,7 @@ declare global {
 export default function Home() {
   const [amount, setAmount] = useState("5.00");
   const [firstName, setFirstName] = useState("");
+  const [selectedCard, setSelectedCard] = useState("NETWORK_3DS");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -33,18 +35,15 @@ export default function Home() {
         body: JSON.stringify({
           amount,
           firstName,
+          cardType: selectedCard,
         }),
       });
 
       const result = await response.json();
       
-      if (!result.success) {
-        throw new Error(result.error || "Payment failed");
-      }
+ 
 
-      const paymentData = result.data;
-      
-      // Call the PaymentSDK to process the payment response
+       // Call the PaymentSDK to process the payment response
       if (window.PaymentSDK) {
         window.PaymentSDK.processPayment(result);
       } else {
@@ -61,7 +60,7 @@ export default function Home() {
 
   return (
     <>
-      <Script src="/s.js" strategy="beforeInteractive" />
+      <Script src="/payment-sdk.js" strategy="beforeInteractive" />
       <div className="grid items-center justify-items-center min-h-screen p-8 sm:p-20">
         <main className="flex flex-col gap-6 items-center sm:items-start">
         <p className="text-xl font-semibold">Hello</p>
@@ -81,6 +80,24 @@ export default function Home() {
           placeholder="Enter amount"
           className="px-4 py-2 border rounded mb-4 w-64"
         />
+
+        <div className="flex flex-col gap-2 mb-4">
+          <label htmlFor="cardSelect" className="text-sm font-medium">
+            Choose Test Card:
+          </label>
+          <select
+            id="cardSelect"
+            value={selectedCard}
+            onChange={(e) => setSelectedCard(e.target.value)}
+            className="px-4 py-2 border rounded w-64"
+          >
+            {getCardOptions().map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label} - {option.card.type} ({option.card.gateway})
+              </option>
+            ))}
+          </select>
+        </div>
 
 
 

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getTestCard } from '../../../config/test-cards.js';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { amount, firstName } = body;
+    const { amount, firstName, cardType = 'NETWORK_3DS' } = body;
 
     // Get token first
     const tokenResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/token`, {
@@ -15,6 +16,9 @@ export async function POST(request: NextRequest) {
       throw new Error('Failed to get authentication token');
     }
 
+    // Get selected test card configuration
+    const selectedCard = getTestCard(cardType);
+    
     const orderId = `${Math.ceil(Math.random() * 10000)}${Math.ceil(Math.random() * 10000)}${Math.ceil(Math.random() * 10000)}`;
 
     const url = "http://localhost:55621/api/payment/v1/create";
@@ -32,7 +36,7 @@ export async function POST(request: NextRequest) {
       hostIp: "127.0.0.1",
       isClientPaymentGateway: true,
       customer: {
-        firstName: firstName || "John",
+        firstName: firstName || selectedCard.holderName,
         lastName: "Doe",
         email: "tes245@test.com",
         phone: "1234567890",
@@ -45,12 +49,13 @@ export async function POST(request: NextRequest) {
       },
       paymentMode: "CreditCard",
       CreditCard: {
-        CcNum: "4093191766216474",
-        CcExpMon: "12",
-        CcExpYr: "2025",
-        Ccvv: "123",
-        CcName: "John Doe",
+        CcNum: selectedCard.number,
+        CcExpMon: selectedCard.expMonth,
+        CcExpYr: selectedCard.expYear,
+        Ccvv: selectedCard.cvv,
+        CcName: selectedCard.holderName,
       },
+      gateway: selectedCard.gateway,
     };
 
     const response = await fetch(url, {

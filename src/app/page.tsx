@@ -68,16 +68,16 @@ export default function Home() {
   return (
     <>
       <Script src="/payment-sdk.js" strategy="beforeInteractive" />
-      <div className="min-h-screen p-8 bg-gray-50">
+      <div className="min-h-screen p-8" style={{ background: 'var(--background)' }}>
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-center mb-8">Payment Gateway Management</h1>
+          <h1 className="text-3xl font-bold text-center mb-8" style={{ color: 'var(--foreground)' }}>Payment Gateway Management</h1>
           
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
             {/* Payment Section */}
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-2xl font-bold mb-6 text-gray-800">Payment Processing</h2>
+            <div className="p-6 rounded-lg shadow-md" style={{ background: 'var(--background)', border: '1px solid rgba(128, 128, 128, 0.3)' }}>
+              <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--foreground)' }}>Payment Processing</h2>
               <div className="flex flex-col gap-4 items-center">
-                <p className="text-xl font-semibold">Hello</p>
+                <p className="text-xl font-semibold" style={{ color: 'var(--foreground)' }}>Hello</p>
 
                 <input
                   type="text"
@@ -85,6 +85,11 @@ export default function Home() {
                   onChange={(e) => setFirstName(e.target.value)}
                   placeholder="Enter your first name"
                   className="px-4 py-2 border rounded w-full max-w-sm"
+                  style={{ 
+                    background: 'var(--background)', 
+                    color: 'var(--foreground)', 
+                    borderColor: 'rgba(128, 128, 128, 0.3)' 
+                  }}
                 />
 
                 <input
@@ -93,10 +98,15 @@ export default function Home() {
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="Enter amount"
                   className="px-4 py-2 border rounded w-full max-w-sm"
+                  style={{ 
+                    background: 'var(--background)', 
+                    color: 'var(--foreground)', 
+                    borderColor: 'rgba(128, 128, 128, 0.3)' 
+                  }}
                 />
 
                 <div className="flex flex-col gap-2 w-full max-w-sm">
-                  <label htmlFor="cardSelect" className="text-sm font-medium">
+                  <label htmlFor="cardSelect" className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>
                     Choose Test Card:
                   </label>
                   <select
@@ -104,6 +114,11 @@ export default function Home() {
                     value={selectedCard}
                     onChange={(e) => setSelectedCard(e.target.value)}
                     className="px-4 py-2 border rounded"
+                    style={{ 
+                      background: 'var(--background)', 
+                      color: 'var(--foreground)', 
+                      borderColor: 'rgba(128, 128, 128, 0.3)' 
+                    }}
                   >
                     {getCardOptions().map(option => (
                       <option key={option.value} value={option.value}>

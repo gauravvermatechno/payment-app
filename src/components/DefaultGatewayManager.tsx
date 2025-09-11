@@ -130,8 +130,8 @@ export default function DefaultGatewayManager() {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Default Gateway Management</h2>
+    <div className="p-6 rounded-lg shadow-md" style={{ background: 'var(--background)', border: '1px solid rgba(128, 128, 128, 0.3)' }}>
+      <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--foreground)' }}>Default Gateway Management</h2>
       
       {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
       {success && <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">{success}</div>}
@@ -139,14 +139,14 @@ export default function DefaultGatewayManager() {
       <div className="space-y-6">
         {/* Current Default Gateways */}
         <div>
-          <h3 className="text-lg font-semibold mb-3">Current Default Gateways</h3>
+          <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--foreground)' }}>Current Default Gateways</h3>
           {defaultGateways.length > 0 ? (
             <div className="space-y-2">
               {defaultGateways.map((gateway) => (
-                <div key={gateway.id} className="flex items-center justify-between p-3 border rounded">
+                <div key={gateway.id} className="flex items-center justify-between p-3 border rounded" style={{ borderColor: 'rgba(128, 128, 128, 0.3)', background: 'var(--background)' }}>
                   <div>
-                    <span className="font-medium">Website ID: {gateway.websiteId}</span>
-                    <span className="ml-4 text-gray-600">Gateway: {gateway.gatewayName}</span>
+                    <span className="font-medium" style={{ color: 'var(--foreground)' }}>Website ID: {gateway.websiteId}</span>
+                    <span className="ml-4" style={{ color: 'var(--foreground)', opacity: 0.7 }}>Gateway: {gateway.gatewayName}</span>
                   </div>
                   <button
                     onClick={() => {
@@ -161,13 +161,13 @@ export default function DefaultGatewayManager() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500">No default gateways found</p>
+            <p style={{ color: 'var(--foreground)', opacity: 0.6 }}>No default gateways found</p>
           )}
         </div>
 
         {/* Available Gateways */}
         <div>
-          <h3 className="text-lg font-semibold mb-3">Available Gateways</h3>
+          <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--foreground)' }}>Available Gateways</h3>
           {availableGateways ? (
             <div className="space-y-4">
               <div>
@@ -199,22 +199,22 @@ export default function DefaultGatewayManager() {
               </div>
             </div>
           ) : (
-            <p className="text-gray-500">Loading available gateways...</p>
+            <p style={{ color: 'var(--foreground)', opacity: 0.6 }}>Loading available gateways...</p>
           )}
         </div>
 
         {/* Update Selected Gateway */}
         <div>
-          <h3 className="text-lg font-semibold mb-3">Update Selected Gateway</h3>
+          <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--foreground)' }}>Update Selected Gateway</h3>
           {selectedGateway && (
-            <div className="mb-3 p-3 bg-gray-50 rounded">
-              <p><strong>Selected:</strong> Website ID {selectedGateway.websiteId} - {selectedGateway.gatewayName}</p>
+            <div className="mb-3 p-3 rounded" style={{ background: 'rgba(128, 128, 128, 0.1)' }}>
+              <p style={{ color: 'var(--foreground)' }}><strong>Selected:</strong> Website ID {selectedGateway.websiteId} - {selectedGateway.gatewayName}</p>
             </div>
           )}
           
           <div className="flex gap-3 items-end">
             <div className="flex-1">
-              <label htmlFor="gatewaySelect" className="block text-sm font-medium mb-2">
+              <label htmlFor="gatewaySelect" className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground)' }}>
                 Choose New Gateway
               </label>
               <select
@@ -222,6 +222,7 @@ export default function DefaultGatewayManager() {
                 value={selectedAvailableGateway}
                 onChange={(e) => setSelectedAvailableGateway(e.target.value)}
                 className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                style={{ background: 'var(--background)', color: 'var(--foreground)', borderColor: 'rgba(128, 128, 128, 0.3)' }}
               >
                 <option value="">Select a gateway...</option>
                 {availableGateways?.activeGateways.map((gateway, index) => (
@@ -252,10 +253,10 @@ export default function DefaultGatewayManager() {
 
         {/* Create New Gateway */}
         <div>
-          <h3 className="text-lg font-semibold mb-3">Create New Default Gateway</h3>
+          <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--foreground)' }}>Create New Default Gateway</h3>
           <div className="space-y-3">
             <div>
-              <label htmlFor="websiteId" className="block text-sm font-medium mb-2">
+              <label htmlFor="websiteId" className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground)' }}>
                 Website ID
               </label>
               <input
@@ -265,11 +266,12 @@ export default function DefaultGatewayManager() {
                 onChange={(e) => setWebsiteId(Number(e.target.value))}
                 placeholder="Enter website ID"
                 className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                style={{ background: 'var(--background)', color: 'var(--foreground)', borderColor: 'rgba(128, 128, 128, 0.3)' }}
               />
             </div>
             <div className="flex gap-3 items-end">
               <div className="flex-1">
-                <label htmlFor="newGatewaySelect" className="block text-sm font-medium mb-2">
+                <label htmlFor="newGatewaySelect" className="block text-sm font-medium mb-2" style={{ color: 'var(--foreground)' }}>
                   Choose Gateway
                 </label>
                 <select
@@ -277,6 +279,7 @@ export default function DefaultGatewayManager() {
                   value={selectedAvailableGateway}
                   onChange={(e) => setSelectedAvailableGateway(e.target.value)}
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                  style={{ background: 'var(--background)', color: 'var(--foreground)', borderColor: 'rgba(128, 128, 128, 0.3)' }}
                 >
                   <option value="">Select a gateway...</option>
                   {availableGateways?.activeGateways.map((gateway, index) => (
@@ -309,13 +312,15 @@ export default function DefaultGatewayManager() {
         <div className="flex gap-3">
           <button
             onClick={fetchDefaultGateways}
-            className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+            className="flex-1 px-4 py-2 rounded"
+            style={{ background: 'rgba(128, 128, 128, 0.2)', color: 'var(--foreground)' }}
           >
             Refresh Default Gateways
           </button>
           <button
             onClick={fetchAvailableGateways}
-            className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+            className="flex-1 px-4 py-2 rounded"
+            style={{ background: 'rgba(128, 128, 128, 0.2)', color: 'var(--foreground)' }}
           >
             Refresh Available Gateways
           </button>

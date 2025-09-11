@@ -94,10 +94,10 @@ export default function ApiLogger() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md border">
-      <div className="p-4 border-b flex items-center justify-between">
+    <div className="rounded-lg shadow-md border" style={{ background: 'var(--background)', borderColor: 'rgba(128, 128, 128, 0.3)' }}>
+      <div className="p-4 border-b flex items-center justify-between" style={{ borderColor: 'rgba(128, 128, 128, 0.3)' }}>
         <div className="flex items-center gap-3">
-          <h3 className="text-lg font-semibold">API Logs</h3>
+          <h3 className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>API Logs</h3>
           <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
           <span className={`text-sm ${isConnected ? 'text-green-600' : 'text-red-600'}`}>
             {isConnected ? 'Connected' : 'Disconnected'}
@@ -120,9 +120,9 @@ export default function ApiLogger() {
       </div>
       
       {isExpanded && (
-        <div className="h-80 overflow-y-auto p-4 bg-gray-50">
+        <div className="h-80 overflow-y-auto p-4" style={{ background: 'rgba(128, 128, 128, 0.1)' }}>
           {logs.length === 0 ? (
-            <div className="text-center text-gray-500 py-8">
+            <div className="text-center py-8" style={{ color: 'var(--foreground)', opacity: 0.7 }}>
               No logs yet. API calls will appear here in real-time.
             </div>
           ) : (

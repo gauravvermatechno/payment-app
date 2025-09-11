@@ -6,11 +6,12 @@
 import { useState } from "react";
 import Script from "next/script";
 import { getCardOptions } from "../config/test-cards.js";
+import DefaultGatewayManager from "../components/DefaultGatewayManager";
 
 declare global {
   interface Window {
     PaymentSDK?: {
-      processPayment: (paymentResponse: any) => void;
+      processPayment: (paymentResponse: unknown) => void;
     };
   }
 }
@@ -61,58 +62,69 @@ export default function Home() {
   return (
     <>
       <Script src="/payment-sdk.js" strategy="beforeInteractive" />
-      <div className="grid items-center justify-items-center min-h-screen p-8 sm:p-20">
-        <main className="flex flex-col gap-6 items-center sm:items-start">
-        <p className="text-xl font-semibold">Hello</p>
+      <div className="min-h-screen p-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold text-center mb-8">Payment Gateway Management</h1>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Payment Section */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-2xl font-bold mb-6 text-gray-800">Payment Processing</h2>
+              <div className="flex flex-col gap-4 items-center">
+                <p className="text-xl font-semibold">Hello</p>
 
-        <input
-          type="text"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          placeholder="Enter your first name"
-          className="px-4 py-2 border rounded mb-2 w-64"
-        />
+                <input
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="Enter your first name"
+                  className="px-4 py-2 border rounded w-full max-w-sm"
+                />
 
-        <input
-          type="text"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="Enter amount"
-          className="px-4 py-2 border rounded mb-4 w-64"
-        />
+                <input
+                  type="text"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="Enter amount"
+                  className="px-4 py-2 border rounded w-full max-w-sm"
+                />
 
-        <div className="flex flex-col gap-2 mb-4">
-          <label htmlFor="cardSelect" className="text-sm font-medium">
-            Choose Test Card:
-          </label>
-          <select
-            id="cardSelect"
-            value={selectedCard}
-            onChange={(e) => setSelectedCard(e.target.value)}
-            className="px-4 py-2 border rounded w-64"
-          >
-            {getCardOptions().map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label} - {option.card.type} ({option.card.gateway})
-              </option>
-            ))}
-          </select>
+                <div className="flex flex-col gap-2 w-full max-w-sm">
+                  <label htmlFor="cardSelect" className="text-sm font-medium">
+                    Choose Test Card:
+                  </label>
+                  <select
+                    id="cardSelect"
+                    value={selectedCard}
+                    onChange={(e) => setSelectedCard(e.target.value)}
+                    className="px-4 py-2 border rounded"
+                  >
+                    {getCardOptions().map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label} - {option.card.type} ({option.card.gateway})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  onClick={handlePayment}
+                  className={`px-6 py-2 rounded text-white w-full max-w-sm ${
+                    loading ? "bg-gray-500" : "bg-blue-600 hover:bg-blue-700"
+                  }`}
+                  disabled={loading}
+                >
+                  {loading ? "Processing..." : "Pay Now"}
+                </button>
+
+                {errorMsg && <p className="text-red-600 mt-2">{errorMsg}</p>}
+              </div>
+            </div>
+
+            {/* Gateway Management Section */}
+            <DefaultGatewayManager />
+          </div>
         </div>
-
-
-
-        <button
-          onClick={handlePayment}
-          className={`px-6 py-2 rounded text-white ${
-            loading ? "bg-gray-500" : "bg-blue-600 hover:bg-blue-700"
-          }`}
-          disabled={loading}
-        >
-          {loading ? "Processing..." : "Pay Now"}
-        </button>
-
-        {errorMsg && <p className="text-red-600 mt-2">{errorMsg}</p>}
-        </main>
       </div>
     </>
   );

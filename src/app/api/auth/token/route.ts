@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST() {
   try {
-    const response = await fetch("https://dev.raynatours.com/api/common/getToken", {
+    const response = await fetch("https://test.raynatours.com/api/common/getToken", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

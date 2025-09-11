@@ -3,10 +3,12 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Script from "next/script";
 import { getCardOptions } from "../config/test-cards.js";
 import DefaultGatewayManager from "../components/DefaultGatewayManager";
+import ApiLogger from "../components/ApiLogger";
+import { installApiWrapper } from "../utils/apiLogger";
 
 declare global {
   interface Window {
@@ -22,6 +24,10 @@ export default function Home() {
   const [selectedCard, setSelectedCard] = useState("NETWORK_3DS");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    installApiWrapper();
+  }, []);
 
   const handlePayment = async () => {
     setLoading(true);
@@ -66,7 +72,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold text-center mb-8">Payment Gateway Management</h1>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
             {/* Payment Section */}
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h2 className="text-2xl font-bold mb-6 text-gray-800">Payment Processing</h2>
@@ -123,6 +129,11 @@ export default function Home() {
 
             {/* Gateway Management Section */}
             <DefaultGatewayManager />
+            
+            {/* API Logger Section */}
+            <div className="xl:col-span-1">
+              <ApiLogger />
+            </div>
           </div>
         </div>
       </div>
